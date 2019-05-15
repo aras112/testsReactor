@@ -16,20 +16,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WashingMachineTest {
+@RunWith(MockitoJUnitRunner.class) public class WashingMachineTest {
 
-    @Mock
-    private DirtDetector dirtDetector;
+    @Mock private DirtDetector dirtDetector;
 
-    @Mock
-    Engine engine;
+    @Mock Engine engine;
 
-    @Mock
-    WaterPump waterPump;
+    @Mock WaterPump waterPump;
 
+    //tested object
     WashingMachine washingMachine;
 
+    //entities
     LaundryBatch laundryBatch;
     ProgramConfiguration programConfiguration;
     LaundryStatus laundryStatus;
@@ -39,13 +37,7 @@ public class WashingMachineTest {
         setDefaultConfiguration();
     }
 
-    @Test
-    public void itCompiles() {
-        assertThat(true, Matchers.equalTo(true));
-    }
-
-    @Test
-    public void givenBatchWith10Kg_whenWashingMachineStart_thenLaundryStatusIsFailureBecauseOfWeight() {
+    @Test public void givenBatchWith10Kg_whenWashingMachineStart_thenLaundryStatusIsFailureBecauseOfWeight() {
 
         //given
         setLaundryBatchWithWeight(10);
@@ -54,12 +46,11 @@ public class WashingMachineTest {
         LaundryStatus laundryStatus = startWashing();
 
         //then
-        Assert.assertThat(laundryStatus.getResult(),is(Result.FAILURE));
-        Assert.assertThat(laundryStatus.getErrorCode(),is(ErrorCode.TOO_HEAVY));
+        Assert.assertThat(laundryStatus.getResult(), is(Result.FAILURE));
+        Assert.assertThat(laundryStatus.getErrorCode(), is(ErrorCode.TOO_HEAVY));
     }
 
-    @Test
-    public void givenBatchWith5Kg_whenWashingMachineStart_thenLaundryStatusIsSuccess() {
+    @Test public void givenBatchWith5Kg_whenWashingMachineStart_thenLaundryStatusIsSuccess() {
 
         //given
         setLaundryBatchWithWeight(5);
@@ -68,11 +59,10 @@ public class WashingMachineTest {
         LaundryStatus laundryStatus = startWashing();
 
         //then
-        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getResult(), is(Result.SUCCESS));
     }
 
-    @Test
-    public void givenDefaultBatch_whenWashingMachineStart_thenLaundryStatusIsSuccess() {
+    @Test public void givenDefaultBatch_whenWashingMachineStart_thenLaundryStatusIsSuccess() {
 
         //given
         setDefaultLaundryBatch();
@@ -81,10 +71,10 @@ public class WashingMachineTest {
         laundryStatus = startWashing();
 
         //then
-        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getResult(), is(Result.SUCCESS));
     }
-    @Test
-    public void givenDefaultBatchAndMediumProgram_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsMedium() {
+
+    @Test public void givenDefaultBatchAndMediumProgram_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsMedium() {
 
         //given
         setDefaultLaundryBatch();
@@ -94,11 +84,11 @@ public class WashingMachineTest {
         laundryStatus = startWashing();
 
         //then
-        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
-        Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.MEDIUM));
+        Assert.assertThat(laundryStatus.getResult(), is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getRunnedProgram(), is(Program.MEDIUM));
     }
-    @Test
-    public void givenAutodetectProgramAnd41pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsLong() {
+
+    @Test public void givenAutodetectProgramAnd41pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsLong() {
 
         //given
         setConfigurationWithProgram(Program.AUTODETECT);
@@ -108,11 +98,11 @@ public class WashingMachineTest {
         laundryStatus = startWashing();
 
         //then
-        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
-        Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.LONG));
+        Assert.assertThat(laundryStatus.getResult(), is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getRunnedProgram(), is(Program.LONG));
     }
-    @Test
-    public void givenAutodetectProgramAnd40pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsMedium() {
+
+    @Test public void givenAutodetectProgramAnd40pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsMedium() {
 
         //given
         setConfigurationWithProgram(Program.AUTODETECT);
@@ -122,12 +112,11 @@ public class WashingMachineTest {
         laundryStatus = startWashing();
 
         //then
-        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
-        Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.MEDIUM));
+        Assert.assertThat(laundryStatus.getResult(), is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getRunnedProgram(), is(Program.MEDIUM));
     }
 
-    @Test
-    public void givenAutodetectProgram_whenWashingMachineStart_thenDirtDetectorRunsDetectFunction() {
+    @Test public void givenAutodetectProgram_whenWashingMachineStart_thenDirtDetectorRunsDetectFunction() {
 
         //given
         setConfigurationWithProgram(Program.AUTODETECT);
@@ -140,8 +129,7 @@ public class WashingMachineTest {
         verify(dirtDetector, Mockito.times(1)).detectDirtDegree(any());
     }
 
-    @Test
-    public void givenLongProgram_whenWashingMachineStart_thenDirtDetectorDoesNotRunDetectFunction() {
+    @Test public void givenLongProgram_whenWashingMachineStart_thenDirtDetectorDoesNotRunDetectFunction() {
 
         //given
         setConfigurationWithProgram(Program.LONG);
@@ -153,8 +141,8 @@ public class WashingMachineTest {
         //then
         verify(dirtDetector, Mockito.times(0)).detectDirtDegree(any());
     }
-    @Test
-    public void givenFalseSpinConfiguration_whenWashingMachineStart_thenEngineDoesNotRunSpin() {
+
+    @Test public void givenFalseSpinConfiguration_whenWashingMachineStart_thenEngineDoesNotRunSpin() {
 
         //given
         setConfigurationWithSpin(false);
@@ -163,8 +151,8 @@ public class WashingMachineTest {
         //then
         verify(engine, Mockito.times(0)).spin();
     }
-    @Test
-    public void givenTrueSpinConfiguration_whenWashingMachineStart_thenEngineRunsSpin() {
+
+    @Test public void givenTrueSpinConfiguration_whenWashingMachineStart_thenEngineRunsSpin() {
 
         //given
         setConfigurationWithSpin(true);
@@ -174,8 +162,7 @@ public class WashingMachineTest {
         verify(engine, Mockito.times(1)).spin();
     }
 
-    @Test
-    public void givenTrueSpinConfigurationAndMaterialDelicate_whenWashingMachineStart_thenEngineDoesNotRunSpin() {
+    @Test public void givenTrueSpinConfigurationAndMaterialDelicate_whenWashingMachineStart_thenEngineDoesNotRunSpin() {
 
         //given
         setConfigurationWithSpin(true);
@@ -186,20 +173,18 @@ public class WashingMachineTest {
         verify(engine, Mockito.times(0)).spin();
     }
 
-    @Test
-    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompPourAndReleaseOnes() {
+    @Test public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompPourAndReleaseOnes() {
 
         //given default values
 
         //when
         startWashing();
         //then
-       verify(waterPump, Mockito.times(1)).pour(any(double.class));
-       verify(waterPump, Mockito.times(1)).release();
+        verify(waterPump, Mockito.times(1)).pour(any(double.class));
+        verify(waterPump, Mockito.times(1)).release();
     }
 
-    @Test
-    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompRunPourAfterRelease() {
+    @Test public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompRunPourAfterRelease() {
 
         //given default values
 
@@ -212,17 +197,15 @@ public class WashingMachineTest {
         inOrder.verify(waterPump).release();
     }
 
-    @Test
-    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenEngineRunWashingOnes() {
+    @Test public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenEngineRunWashingOnes() {
 
         //given default values
 
         //when
         startWashing();
         //then
-       verify(engine, Mockito.times(1)).runWashing(any(int.class));
+        verify(engine, Mockito.times(1)).runWashing(any(int.class));
     }
-
 
     private LaundryStatus startWashing() {
         washingMachine = new WashingMachine(dirtDetector, engine, waterPump);
@@ -230,26 +213,29 @@ public class WashingMachineTest {
     }
 
     private void setDefaultLaundryBatch() {
-        laundryBatch= LaundryBatch.builder().withType(Material.COTTON).withWeightKg(5D).build();
+        laundryBatch = LaundryBatch.builder().withType(Material.COTTON).withWeightKg(5D).build();
     }
 
     private void setLaundryBatchWithWeight(double weight) {
-        laundryBatch= LaundryBatch.builder().withType(Material.COTTON).withWeightKg(weight).build();
+        laundryBatch = LaundryBatch.builder().withType(Material.COTTON).withWeightKg(weight).build();
     }
 
     private void setLaundryBatchWithMaterial(Material material) {
-        laundryBatch= LaundryBatch.builder().withType(material).withWeightKg(5D).build();
+        laundryBatch = LaundryBatch.builder().withType(material).withWeightKg(5D).build();
     }
+
     private void setDefaultConfiguration() {
-        programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(true).build();
+        programConfiguration = ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(true).build();
     }
 
     private void setConfigurationWithProgram(Program program) {
-        programConfiguration= ProgramConfiguration.builder().withProgram(program).withSpin(true).build();
+        programConfiguration = ProgramConfiguration.builder().withProgram(program).withSpin(true).build();
     }
+
     private void setConfigurationWithSpin(boolean spin) {
-        programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(spin).build();
+        programConfiguration = ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(spin).build();
     }
+
     private void setDetectedDirtyDegree(int i) {
         when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(i));
     }
