@@ -173,7 +173,7 @@ public class WashingMachineTest {
     }
 
     @Test
-    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompPourAndReleaseOne() {
+    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompPourAndReleaseOnes() {
 
         //given default values
 
@@ -182,6 +182,17 @@ public class WashingMachineTest {
         //then
        verify(waterPump, Mockito.times(1)).pour(any(double.class));
        verify(waterPump, Mockito.times(1)).release();
+    }
+
+    @Test
+    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenEngineRunWashingOnes() {
+
+        //given default values
+
+        //when
+        startWashing();
+        //then
+       verify(engine, Mockito.times(1)).runWashing(any(int.class));
     }
 
 
