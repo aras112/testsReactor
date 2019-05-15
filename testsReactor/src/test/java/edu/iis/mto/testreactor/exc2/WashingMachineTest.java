@@ -2,6 +2,8 @@ package edu.iis.mto.testreactor.exc2;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -65,7 +67,50 @@ public class WashingMachineTest {
 
         //then
         Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+    }
+    @Test
+    public void givenDefaultBatchAndMediumProgram_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsMedium() {
 
+        //given
+        setDefaultLaundryBatch();
+        setConfigurationWithProgram(Program.MEDIUM);
+
+        //when
+        LaundryStatus laundryStatus = startWashing();
+
+        //then
+        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.MEDIUM));
+    }
+    @Test
+    public void givenAutodetectProgramAnd41pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsLong() {
+
+        //given
+        setDefaultLaundryBatch();
+        setConfigurationWithProgram(Program.AUTODETECT);
+        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(41));
+
+        //when
+        LaundryStatus laundryStatus = startWashing();
+
+        //then
+        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.LONG));
+    }
+    @Test
+    public void givenAutodetectProgramAnd40pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsMedium() {
+
+        //given
+        setDefaultLaundryBatch();
+        setConfigurationWithProgram(Program.AUTODETECT);
+        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
+
+        //when
+        LaundryStatus laundryStatus = startWashing();
+
+        //then
+        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+        Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.MEDIUM));
     }
 
     private LaundryStatus startWashing() {
@@ -83,5 +128,7 @@ public class WashingMachineTest {
 
     private void setDefaultConfiguration() {
         programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(true).build();
+    }private void setConfigurationWithProgram(Program program) {
+        programConfiguration= ProgramConfiguration.builder().withProgram(program).withSpin(true).build();
     }
 }
