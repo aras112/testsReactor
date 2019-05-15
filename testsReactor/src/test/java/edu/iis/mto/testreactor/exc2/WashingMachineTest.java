@@ -32,6 +32,7 @@ public class WashingMachineTest {
 
     LaundryBatch laundryBatch;
     ProgramConfiguration programConfiguration;
+    LaundryStatus laundryStatus;
 
     @Before public void initialize() {
         setDefaultLaundryBatch();
@@ -58,13 +59,26 @@ public class WashingMachineTest {
     }
 
     @Test
+    public void givenBatchWith5Kg_whenWashingMachineStart_thenLaundryStatusIsSuccess() {
+
+        //given
+        setLaundryBatchWithWeight(5);
+
+        //when
+        LaundryStatus laundryStatus = startWashing();
+
+        //then
+        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+    }
+
+    @Test
     public void givenDefaultBatch_whenWashingMachineStart_thenLaundryStatusIsSuccess() {
 
         //given
         setDefaultLaundryBatch();
 
         //when
-        LaundryStatus laundryStatus = startWashing();
+        laundryStatus = startWashing();
 
         //then
         Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
@@ -77,7 +91,7 @@ public class WashingMachineTest {
         setConfigurationWithProgram(Program.MEDIUM);
 
         //when
-        LaundryStatus laundryStatus = startWashing();
+        laundryStatus = startWashing();
 
         //then
         Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
@@ -88,10 +102,10 @@ public class WashingMachineTest {
 
         //given
         setConfigurationWithProgram(Program.AUTODETECT);
-        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(41));
+        setDetectedDirtyDegree(41);
 
         //when
-        LaundryStatus laundryStatus = startWashing();
+        laundryStatus = startWashing();
 
         //then
         Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
@@ -102,21 +116,22 @@ public class WashingMachineTest {
 
         //given
         setConfigurationWithProgram(Program.AUTODETECT);
-        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
+        setDetectedDirtyDegree(40);
 
         //when
-        LaundryStatus laundryStatus = startWashing();
+        laundryStatus = startWashing();
 
         //then
         Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
         Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.MEDIUM));
     }
+
     @Test
     public void givenAutodetectProgram_whenWashingMachineStart_thenDirtDetectorRunsDetectFunction() {
 
         //given
         setConfigurationWithProgram(Program.AUTODETECT);
-        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
+        setDetectedDirtyDegree(40);
 
         //when
         startWashing();
@@ -124,12 +139,13 @@ public class WashingMachineTest {
         //then
         verify(dirtDetector, Mockito.times(1)).detectDirtDegree(any());
     }
+
     @Test
     public void givenLongProgram_whenWashingMachineStart_thenDirtDetectorDoesNotRunDetectFunction() {
 
         //given
         setConfigurationWithProgram(Program.LONG);
-        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
+        setDetectedDirtyDegree(40);
 
         //when
         startWashing();
@@ -147,7 +163,6 @@ public class WashingMachineTest {
         //then
         verify(engine, Mockito.times(0)).spin();
     }
-
     @Test
     public void givenTrueSpinConfiguration_whenWashingMachineStart_thenEngineRunsSpin() {
 
@@ -221,17 +236,21 @@ public class WashingMachineTest {
     private void setLaundryBatchWithWeight(double weight) {
         laundryBatch= LaundryBatch.builder().withType(Material.COTTON).withWeightKg(weight).build();
     }
+
     private void setLaundryBatchWithMaterial(Material material) {
         laundryBatch= LaundryBatch.builder().withType(material).withWeightKg(5D).build();
     }
-
     private void setDefaultConfiguration() {
         programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(true).build();
     }
+
     private void setConfigurationWithProgram(Program program) {
         programConfiguration= ProgramConfiguration.builder().withProgram(program).withSpin(true).build();
     }
     private void setConfigurationWithSpin(boolean spin) {
         programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(spin).build();
+    }
+    private void setDetectedDirtyDegree(int i) {
+        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(i));
     }
 }
