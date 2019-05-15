@@ -120,7 +120,7 @@ public class WashingMachineTest {
         when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
 
         //when
-        LaundryStatus laundryStatus = startWashing();
+        startWashing();
 
         //then
         verify(dirtDetector, Mockito.times(1)).detectDirtDegree(any());
@@ -133,11 +133,33 @@ public class WashingMachineTest {
         when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
 
         //when
-        LaundryStatus laundryStatus = startWashing();
+        startWashing();
 
         //then
         verify(dirtDetector, Mockito.times(0)).detectDirtDegree(any());
     }
+    @Test
+    public void givenFalseSpinConfiguration_whenWashingMachineStart_thenEngineDoesNotRunSpin() {
+
+        //given
+        setConfigurationWithSpin(false);
+        //when
+        startWashing();
+        //then
+        verify(engine, Mockito.times(0)).spin();
+    }
+
+    @Test
+    public void givenTrueSpinConfiguration_whenWashingMachineStart_thenEngineRunsSpin() {
+
+        //given
+        setConfigurationWithSpin(true);
+        //when
+        startWashing();
+        //then
+        verify(engine, Mockito.times(1)).spin();
+    }
+
 
     private LaundryStatus startWashing() {
         washingMachine = new WashingMachine(dirtDetector, engine, waterPump);
@@ -154,7 +176,11 @@ public class WashingMachineTest {
 
     private void setDefaultConfiguration() {
         programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(true).build();
-    }private void setConfigurationWithProgram(Program program) {
+    }
+    private void setConfigurationWithProgram(Program program) {
         programConfiguration= ProgramConfiguration.builder().withProgram(program).withSpin(true).build();
+    }
+    private void setConfigurationWithSpin(boolean spin) {
+        programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(spin).build();
     }
 }
