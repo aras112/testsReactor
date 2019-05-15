@@ -160,6 +160,18 @@ public class WashingMachineTest {
         verify(engine, Mockito.times(1)).spin();
     }
 
+    @Test
+    public void givenTrueSpinConfigurationAndMaterialDelicate_whenWashingMachineStart_thenEngineDoesNotRunSpin() {
+
+        //given
+        setConfigurationWithSpin(true);
+        setLaundryBatchWithMaterial(Material.DELICATE);
+        //when
+        startWashing();
+        //then
+        verify(engine, Mockito.times(0)).spin();
+    }
+
 
     private LaundryStatus startWashing() {
         washingMachine = new WashingMachine(dirtDetector, engine, waterPump);
@@ -172,6 +184,9 @@ public class WashingMachineTest {
 
     private void setLaundryBatchWithWeight(double weight) {
         laundryBatch= LaundryBatch.builder().withType(Material.COTTON).withWeightKg(weight).build();
+    }
+    private void setLaundryBatchWithMaterial(Material material) {
+        laundryBatch= LaundryBatch.builder().withType(material).withWeightKg(5D).build();
     }
 
     private void setDefaultConfiguration() {
