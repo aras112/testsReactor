@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -52,10 +53,8 @@ public class WashingMachineTest {
         LaundryStatus laundryStatus = startWashing();
 
         //then
-
         Assert.assertThat(laundryStatus.getResult(),is(Result.FAILURE));
         Assert.assertThat(laundryStatus.getErrorCode(),is(ErrorCode.TOO_HEAVY));
-
     }
 
     @Test
@@ -182,6 +181,20 @@ public class WashingMachineTest {
         //then
        verify(waterPump, Mockito.times(1)).pour(any(double.class));
        verify(waterPump, Mockito.times(1)).release();
+    }
+
+    @Test
+    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompRunPourAfterRelease() {
+
+        //given default values
+
+        //when
+        startWashing();
+        //then
+
+        InOrder inOrder = Mockito.inOrder(waterPump);
+        inOrder.verify(waterPump).pour(any(double.class));
+        inOrder.verify(waterPump).release();
     }
 
     @Test
