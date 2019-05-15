@@ -172,6 +172,18 @@ public class WashingMachineTest {
         verify(engine, Mockito.times(0)).spin();
     }
 
+    @Test
+    public void givenDefaultLaundryAndConfiguration_whenWashingMachineStart_thenWaterPompPourAndReleaseOne() {
+
+        //given default values
+
+        //when
+        startWashing();
+        //then
+       verify(waterPump, Mockito.times(1)).pour(any(double.class));
+       verify(waterPump, Mockito.times(1)).release();
+    }
+
 
     private LaundryStatus startWashing() {
         washingMachine = new WashingMachine(dirtDetector, engine, waterPump);
