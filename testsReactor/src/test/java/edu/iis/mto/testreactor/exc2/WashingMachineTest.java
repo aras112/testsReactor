@@ -3,6 +3,7 @@ package edu.iis.mto.testreactor.exc2;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hamcrest.Matchers;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -86,7 +88,6 @@ public class WashingMachineTest {
     public void givenAutodetectProgramAnd41pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsLong() {
 
         //given
-        setDefaultLaundryBatch();
         setConfigurationWithProgram(Program.AUTODETECT);
         when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(41));
 
@@ -101,7 +102,6 @@ public class WashingMachineTest {
     public void givenAutodetectProgramAnd40pDirtLevel_whenWashingMachineStart_thenLaundryStatusIsSuccessAndProgramIsMedium() {
 
         //given
-        setDefaultLaundryBatch();
         setConfigurationWithProgram(Program.AUTODETECT);
         when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
 
@@ -111,6 +111,32 @@ public class WashingMachineTest {
         //then
         Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
         Assert.assertThat(laundryStatus.getRunnedProgram(),is(Program.MEDIUM));
+    }
+    @Test
+    public void givenAutodetectProgram_whenWashingMachineStart_thenDirtDetectorRunsDetectFunction() {
+
+        //given
+        setConfigurationWithProgram(Program.AUTODETECT);
+        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
+
+        //when
+        LaundryStatus laundryStatus = startWashing();
+
+        //then
+        verify(dirtDetector, Mockito.times(1)).detectDirtDegree(any());
+    }
+    @Test
+    public void givenLongProgram_whenWashingMachineStart_thenDirtDetectorDoesNotRunDetectFunction() {
+
+        //given
+        setConfigurationWithProgram(Program.LONG);
+        when(dirtDetector.detectDirtDegree(any())).thenReturn(new Percentage(40));
+
+        //when
+        LaundryStatus laundryStatus = startWashing();
+
+        //then
+        verify(dirtDetector, Mockito.times(0)).detectDirtDegree(any());
     }
 
     private LaundryStatus startWashing() {
