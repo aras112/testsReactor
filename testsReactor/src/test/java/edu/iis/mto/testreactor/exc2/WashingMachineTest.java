@@ -30,7 +30,7 @@ public class WashingMachineTest {
 
     @Before public void initialize() {
         setDefaultLaundryBatch();
-        programConfiguration=ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(true).build();
+        setDefaultConfiguration();
     }
 
     @Test
@@ -45,17 +45,33 @@ public class WashingMachineTest {
         setLaundryBatchWithWeight(10);
 
         //when
-       washingMachine=new WashingMachine(dirtDetector,engine,waterPump);
-       LaundryStatus laundryStatus=washingMachine.start(laundryBatch,programConfiguration);
+        LaundryStatus laundryStatus = startWashing();
 
-       //then
+        //then
 
         Assert.assertThat(laundryStatus.getResult(),is(Result.FAILURE));
         Assert.assertThat(laundryStatus.getErrorCode(),is(ErrorCode.TOO_HEAVY));
 
     }
 
+    @Test
+    public void givenDefaultBatch_whenWashingMachineStart_thenLaundryStatusIsSuccess() {
 
+        //given
+        setDefaultLaundryBatch();
+
+        //when
+        LaundryStatus laundryStatus = startWashing();
+
+        //then
+        Assert.assertThat(laundryStatus.getResult(),is(Result.SUCCESS));
+
+    }
+
+    private LaundryStatus startWashing() {
+        washingMachine = new WashingMachine(dirtDetector, engine, waterPump);
+        return washingMachine.start(laundryBatch, programConfiguration);
+    }
 
     private void setDefaultLaundryBatch() {
         laundryBatch= LaundryBatch.builder().withType(Material.COTTON).withWeightKg(5D).build();
@@ -63,5 +79,9 @@ public class WashingMachineTest {
 
     private void setLaundryBatchWithWeight(double weight) {
         laundryBatch= LaundryBatch.builder().withType(Material.COTTON).withWeightKg(weight).build();
+    }
+
+    private void setDefaultConfiguration() {
+        programConfiguration= ProgramConfiguration.builder().withProgram(Program.MEDIUM).withSpin(true).build();
     }
 }
